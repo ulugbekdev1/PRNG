@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { MersenneTwister } from "../utils/MersenneTwister";
 import { computeMean, computeVariance, chiSquareTest } from "../utils/Stats";
 import Chart from "chart.js/auto";
+import "./Random.css";
 
 // TRNG yordamchi funksiyasi
 function generateTRNG(count) {
