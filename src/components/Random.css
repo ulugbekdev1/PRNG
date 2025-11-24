@@ -1,124 +1,76 @@
-/* RandomLab.css */
-
-/* Umumiy container */
-.container {
-  max-width: 1000px;
+.randomlab-container {
+  max-width: 1100px;
   margin: 24px auto;
-  font-family: 'Inter', Arial, sans-serif;
-  padding: 12px;
-  background: #ffffff;
+  font-family: Arial, sans-serif;
+  background: #f9fafb;
+  padding: 16px 24px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 
-/* Sarlavha */
-h1 {
-  text-align: center;
-  margin-bottom: 24px;
-  color: #1f2937;
-}
-
-/* Controls */
 .controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-.control {
-  flex: 1 1 200px;
-  display: flex;
-  flex-direction: column;
-}
-.control label {
-  margin-bottom: 6px;
-  font-weight: 500;
-  color: #374151;
-}
-.control select, .control input {
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-  outline: none;
-}
-.control input:disabled {
-  background: #f3f4f6;
-  cursor: not-allowed;
-}
-
-/* Buttons */
-.buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
 }
-.buttons button {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #3b82f6;
-  background-color: #3b82f6;
-  color: white;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-.buttons button:hover {
-  background-color: #2563eb;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+
+.control {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 200px;
 }
 
-/* Chart */
-canvas {
-  width: 100% !important;
-  max-width: 100%;
+.control label {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.control input, .control select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
   margin-bottom: 16px;
 }
 
-/* Results */
+button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #fff;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
 .results {
   display: flex;
   flex-wrap: wrap;
   gap: 24px;
 }
+
 .values, .stats {
   flex: 1 1 300px;
 }
-.values .box {
+
+.box {
   max-height: 200px;
   overflow-y: auto;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  padding: 10px;
-  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 6px;
 }
+
 .placeholder {
-  color: #9ca3af;
-  font-style: italic;
-}
-
-/* H3 */
-h3 {
-  margin-bottom: 8px;
-  color: #1f2937;
-}
-
-/* Statistika */
-.stats div {
-  margin-bottom: 6px;
-  font-size: 14px;
-}
-
-/* Responsive: kichik ekranlar uchun */
-@media (max-width: 768px) {
-  .controls {
-    flex-direction: column;
-  }
-  .buttons {
-    flex-direction: column;
-  }
-  .results {
-    flex-direction: column;
-  }
+  color: #777;
 }

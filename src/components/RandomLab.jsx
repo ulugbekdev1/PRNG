@@ -29,24 +29,40 @@ export default function RandomLab() {
   const [count, setCount] = useState(200);
   const [numbers, setNumbers] = useState([]);
   const [mt, setMt] = useState(null);
+  const [generating, setGenerating] = useState(false);
   const chartInstance = useRef(null);
 
   useEffect(() => {
     if (type === "mt") setMt(new MersenneTwister(seed));
   }, [type, seed]);
 
-  function generateNumbers() {
+  // Sonlarni animatsion tarzda generatsiya qilish
+  function generateNumbersAnimated() {
+    setNumbers([]);
+    setGenerating(true);
     let out = [];
-    if (type === "mt") {
-      const g = mt || new MersenneTwister(seed);
-      for (let i = 0; i < count; i++) out.push(g.random());
-    } else if (type === "lcg") {
-      out = generateLCG(seed, count);
-    } else if (type === "webcrypto" || type === "trng") {
-      out = generateTRNG(count);
-    }
-    setNumbers(out);
-    drawChart(out);
+    let g;
+    if (type === "mt") g = mt || new MersenneTwister(seed);
+
+    let i = 0;
+    const step = () => {
+      if (i >= count) {
+        setGenerating(false);
+        drawChart(out);
+        return;
+      }
+      let val;
+      if (type === "mt") val = g.random();
+      else if (type === "lcg") val = generateLCG(seed, 1)[0];
+      else if (type === "webcrypto" || type === "trng") val = generateTRNG(1)[0];
+
+      out.push(val);
+      setNumbers([...out]);
+      drawChart(out);
+      i++;
+      requestAnimationFrame(step);
+    };
+    step();
   }
 
   function drawChart(data) {
@@ -56,17 +72,31 @@ export default function RandomLab() {
       type: "line",
       data: {
         labels: data.map((_, i) => i + 1),
-        datasets: [{ label: `${type.toUpperCase()} qiymatlar (0..1)`, data, borderWidth: 2, pointRadius: 0, borderColor: "#3b82f6" }],
+        datasets: [{
+          label: `${type.toUpperCase()} qiymatlar (0..1)`,
+          data,
+          borderWidth: 2,
+          pointRadius: 0,
+          borderColor:
+            type === "mt" ? "#3b82f6" :
+            type === "lcg" ? "#f97316" :
+            type === "webcrypto" ? "#10b981" : "#8b5cf6"
+        }],
       },
       options: { scales: { y: { min: 0, max: 1 } }, responsive: true, animation: false },
     });
   }
 
-  const stats = numbers.length ? { mean: computeMean(numbers), variance: computeVariance(numbers), chi: chiSquareTest(numbers, 10) } : null;
+  const stats = numbers.length ? {
+    mean: computeMean(numbers),
+    variance: computeVariance(numbers),
+    chi: chiSquareTest(numbers, 10)
+  } : null;
 
   return (
-    <div className="container">
-      <h1>PRNG / TRNG Lab</h1>
+    <div className="randomlab-container">
+      <h1>PRNG / TRNG Lab </h1>
+
       <div className="controls">
         <div className="control">
           <label>Generator turi:</label>
@@ -86,11 +116,14 @@ export default function RandomLab() {
           <input type="number" min={1} max={5000} value={count} onChange={e => setCount(Number(e.target.value) || 1)} />
         </div>
       </div>
+
       <div className="buttons">
-        <button onClick={generateNumbers}>Generatsiya qilish</button>
+        <button onClick={generateNumbersAnimated} disabled={generating}>{generating ? "Generatsiya qilinmoqda..." : "Generatsiya qilish"}</button>
         <button onClick={() => { setNumbers([]); if (chartInstance.current) chartInstance.current.destroy(); }}>Tozalash</button>
       </div>
-      <canvas id="chart" width="900" height="250"></canvas>
+
+      <canvas id="chart" width="900" height="300"></canvas>
+
       <div className="results">
         <div className="values">
           <h3>So‘ngi {numbers.length} ta qiymat</h3>
