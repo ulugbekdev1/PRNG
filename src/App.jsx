@@ -1,9 +1,16 @@
 import React from "react";
+import Sidebar from "./components/Sidebar";
 import RandomLab from "./components/RandomLab";
-import "./index.css";
+import "./App.css";
 
-function App() {
-  return <RandomLab />;
+export default function App() {
+  return (
+    <div className="layout">
+      <Sidebar />
+
+      <main className="content">
+        <RandomLab />
+      </main>
+    </div>
+  );
 }
-
-export default App;
