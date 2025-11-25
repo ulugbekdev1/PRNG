@@ -108,9 +108,32 @@ export default function RandomLab() {
           </select>
         </div>
         <div className="control">
-          <label>Seed (32-bit):</label>
-          <input type="number" value={seed} onChange={e => setSeed(Number(e.target.value) || 0)} disabled={type === "trng" || type === "webcrypto"} />
-        </div>
+  <label>Seed (32-bit):</label>
+  <input
+    type="number"
+    value={seed}
+    onChange={(e) => {
+      const val = e.target.value;
+
+      // Bo‘sh bo‘lsa — hech narsa qilmaymiz
+      if (val === "") {
+        setSeed("");
+        return;
+      }
+
+      // Sonni numberga o‘tkazamiz
+      let num = Number(val);
+
+      // 32-bit diapazonini tekshiramiz
+      if (num < 0) num = 0;
+      if (num > 0xffffffff) num = 0xffffffff;
+
+      setSeed(num);
+    }}
+    disabled={type === "trng" || type === "webcrypto"}
+  />
+</div>
+
         <div className="control">
           <label>Soni:</label>
           <input type="number" min={1} max={5000} value={count} onChange={e => setCount(Number(e.target.value) || 1)} />
@@ -142,6 +165,83 @@ export default function RandomLab() {
             </div>
           ) : (<div className="placeholder">Natijalar — Generate qiling.</div>)}
         </div>
+        <div className="summary">
+  <h3>Yakuniy xulosa</h3>
+
+  {stats ? (
+    <div>
+
+      {/* === TASODIFIYLIK INDIKATORI (YASHIL / QIZIL) === */}
+      <div 
+        style={{
+          width: "20px",
+          height: "20px",
+          borderRadius: "50%",
+          marginBottom: "10px",
+          background: stats.chi.pass ? "#22c55e" : "#ef4444"
+        }}
+      ></div>
+
+      {/* === ASOSIY XULOSA === */}
+      <p style={{ fontWeight: "bold", fontSize: "17px" }}>
+        {stats.chi.pass 
+          ? "➤ Xulosa: Ketma-ketlik tasodifiylikka yaqin." 
+          : "➤ Xulosa: Ketma-ketlik tasodifiy emas."}
+      </p>
+
+      {/* === RANDOMNESS SCORE % === */}
+      <p>
+        Randomness Score:{" "}
+        <b>
+          {Math.max(
+            0,
+            Math.min(
+              100,
+              100 - Math.abs(stats.mean - 0.5) * 200 - Math.abs(stats.variance - 1/12) * 1000
+            )
+          ).toFixed(1)}%
+        </b>
+      </p>
+
+      {/* === STATISTIK KO‘RSATKICHLAR === */}
+      <p>O‘rtacha qiymat: <b>{stats.mean.toFixed(5)}</b> (ideal: 0.5)</p>
+      <p>Dispersiya: <b>{stats.variance.toFixed(5)}</b> (ideal: ≈0.08333)</p>
+      <p>Chi-square: <b>{stats.chi.chi2.toFixed(4)}</b></p>
+
+      {/* === GENERATOR TURIGA QARAB IZOH === */}
+      <div className="gen-comment">
+        <h4>Generator haqida izoh:</h4>
+        {type === "mt" && (
+          <p>
+            Mersenne Twister — juda tez va sifatli PRNG. Statistik jihatdan 
+            ko‘p hollarda tasodifiylikka juda yaqin bo‘ladi, lekin kriptografik emas.
+          </p>
+        )}
+        {type === "lcg" && (
+          <p>
+            LCG — eng sodda generator. Tez ishlaydi, lekin uzun muddatli tasodifiylik
+            sifati past. Chi-square testda ko‘pincha muvaffaqiyatsiz bo‘ladi.
+          </p>
+        )}
+        {type === "webcrypto" && (
+          <p>
+            Web Crypto — brauzer darajasidagi kriptografik generator. Juda 
+            sifatli, xavfsiz va haqiqiy tasodifiylikka eng yaqin.
+          </p>
+        )}
+        {type === "trng" && (
+          <p>
+            TRNG — tizimdagi fizika jarayonlariga asoslangan haqiqiy tasodifiy.
+            Statistika natijalari doimo ancha yaxshi chiqadi.
+          </p>
+        )}
+      </div>
+    </div>
+  ) : (
+    <div className="placeholder">Yakuniy xulosa uchun avval sonlar generatsiya qiling.</div>
+  )}
+</div>
+
       </div>
     </div>
   );
